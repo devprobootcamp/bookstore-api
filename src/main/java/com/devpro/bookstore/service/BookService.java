@@ -1,66 +1,51 @@
 package com.devpro.bookstore.service;
 
 import com.devpro.bookstore.dto.Book;
+import com.devpro.bookstore.repository.BookRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class BookService {
 
-    private static Map<String, Book> bookMap = new HashMap<>();
 
-    public BookService() {
-        Book book1 = new Book("Learning java", "12345", "Lewis");
-        Book book2 = new Book("Learning SQL", "54321", "Eddy");
-        Book book3 = new Book("Learning CSS", "98765", "Kiffa");
-        Book book4 = new Book("Learning HTML", "00009", "Cynthia");
-        bookMap.put("12345", book1);
-        bookMap.put("54321", book2);
-        bookMap.put("98765", book3);
-        bookMap.put("00009", book4);
+    private BookRepository bookRepository; // Dependecy
+
+    @Autowired // Dependency injection
+    public BookService(BookRepository bookRepository) {
+        this.bookRepository = bookRepository;
     }
 
     public List<Book> getAllBooks() {
-        return List.copyOf(bookMap.values());
+        return bookRepository.findAll();
     }
 
     public List<Book> searchBooks(String author, String title) {
-        List<Book> res = new ArrayList<>();
-        for(Book bk: bookMap.values()){
-            if(bk.getAuthor().contains(author) && bk.getTitle().contains(title)){
-                res.add(bk);
-            }
-        }
-        return res;
+        return bookRepository.searchBooks(author, title);
     }
 
     public void addBook(Book book) {
-        bookMap.put(book.getIbns(), book);
+        bookRepository.save(book);
     }
 
     public Book getBook(String ibns) {
-        return bookMap.get(ibns);
+        return bookRepository.findBook(ibns);
     }
 
     public void deleteBook(String ibns) {
-        bookMap.remove(ibns);
+        bookRepository.deleteBook(ibns);
     }
 
     public Boolean updateBook(String ibns, Book book) {
-        Book oldData = bookMap.get(ibns);
+        Book oldData = bookRepository.findBook(ibns);
         if (oldData != null) {
-            bookMap.put(ibns, book);
+            bookRepository.updateBook(ibns, book);
             return true;
-
-        } else {
-            return false;
         }
+        return false;
     }
-
 
 
 }
