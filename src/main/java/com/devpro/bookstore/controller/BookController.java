@@ -1,6 +1,7 @@
 package com.devpro.bookstore.controller;
 
 import com.devpro.bookstore.dto.Book;
+import com.devpro.bookstore.model.BookEntity;
 import com.devpro.bookstore.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,6 +20,17 @@ public class BookController {
     @Autowired
     public BookController(BookService bookService) {
         this.bookService = bookService;
+    }
+
+
+    @GetMapping("/all_books")
+    public ResponseEntity<List<BookEntity>> getAllBooks() {
+        return new ResponseEntity<>(bookService.getBooks(), HttpStatus.OK);
+    }
+
+    @GetMapping("/abook/{ibns}")
+    public ResponseEntity<BookEntity> getABook(@PathVariable String ibns) {
+        return new ResponseEntity<>(bookService.getABooks(ibns), HttpStatus.OK);
     }
 
     @GetMapping("/book/{ibns}")
